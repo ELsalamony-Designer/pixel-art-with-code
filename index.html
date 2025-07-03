@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pixel Art from Grid</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #282c34;
+      --card-bg: #3a404c;
+      --text-color: #e0e0e0;
+      --accent-color: #61dafb;
+      --button-bg: #61dafb;
+      --button-hover: #21a1f1;
+      --border-color: #4a515c;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --pixel-bg: #1a1e24;
+      --modal-bg: rgba(0, 0, 0, 0.7);
+      --modal-card-bg: #2b3038;
+      --success-color: #4CAF50;
+      --error-color: #f44336;
+      --grid-cell-size: 25px; /* Size for grid input cells */
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Cairo', sans-serif;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px 10px;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      flex-wrap: wrap;
+    }
+
+    .header-buttons {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .main-layout {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 1200px;
+        flex-wrap: wrap;
+    }
+
+    .color-palette {
+        background: var(--card-bg);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        border: 1px solid var(--border-color);
+        max-height: 85vh;
+        overflow-y: auto;
+        width: 250px;
+        flex-shrink: 0;
+        text-align: left;
+        margin-right: auto;
+        margin-left: 0;
+        direction: ltr;
+        box-sizing: border-box;
+    }
+
+    .color-palette h3 {
+        font-family: 'Cairo', sans-serif;
+        color: var(--accent-color);
+        margin-bottom: 15px;
+        font-size: 1.4em;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 8px;
+        text-align: center;
+    }
+
+    .color-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+        background-color: rgba(0,0,0,0.1);
+        padding: 6px 10px;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+    }
+
+    .color-item:hover {
+        background-color: rgba(0,0,0,0.2);
+    }
+
+    .color-box {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        border: 1px solid rgba(255,255,255,0.2);
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+
+    .color-code-char {
+        font-family: monospace;
+        font-weight: bold;
+        color: var(--button-bg);
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+
+    .color-name-hex {
+        flex-grow: 1;
+        text-align: left;
+    }
+
+    .color-name {
+        color: var(--text-color);
+    }
+
+    .color-hex {
+        font-size: 0.75em;
+        color: #999;
+        display: block;
+    }
+
+    .container {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      max-width: 500px; /* Adjusted max-width for the grid inputs */
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 25px;
+      direction: ltr;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: radial-gradient(circle, var(--accent-color) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+
+    h2 {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--accent-color);
+      margin-bottom: 20px;
+      font-size: 1.6em;
+      text-shadow: 3px 3px 0px rgba(0,0,0,0.6);
+      letter-spacing: 1px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1em;
+      color: var(--text-color);
+      text-align: left;
+      width: 100%;
+    }
+
+    input[type="text"],
+    textarea {
+      width: calc(100% - 16px);
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: monospace;
+      font-size: 1em;
+      text-align: left;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      line-height: 1.4;
+      white-space: pre;
+      overflow: auto;
+    }
+    textarea { /* This will be removed, but kept for now as a fallback if not fully replaced */
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--button-bg);
+      box-shadow: 0 0 15px rgba(97, 218, 251, 0.5);
+    }
+
+    .input-dimensions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+    .input-dimensions > div {
+        flex: 1;
+        min-width: 120px;
+    }
+    .input-dimensions input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 0; /* Remove default margin */
+    }
+    .input-dimensions button {
+        flex-shrink: 0;
+        margin-top: 5px; /* Adjust if needed */
+        min-width: 100px;
+    }
+
+    /* Pixel Grid Container */
+    #pixelGridContainer {
+        display: grid;
+        gap: 1px; /* Small gap between pixels */
+        border: 1px solid var(--border-border-color);
+        padding: 5px;
+        background-color: #1a1e24; /* Dark background for the grid area */
+        overflow: auto; /* Enable scrolling if grid is too large */
+        max-width: 100%;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+        justify-content: center; /* Center the grid horizontally */
+    }
+
+    #pixelGridContainer input {
+        width: var(--grid-cell-size);
+        height: var(--grid-cell-size);
+        padding: 0;
+        margin: 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: #2b3038; /* Default background for individual cells */
+        color: var(--text-color);
+        text-align: center;
+        font-family: 'Press Start 2P', cursive; /* Pixel font for input */
+        font-size: 0.8em; /* Smaller font for single characters */
+        text-transform: lowercase; /* Convert input to lowercase */
+        border-radius: 2px;
+        box-sizing: border-box; /* Include padding and border in element's total width and height */
+        -moz-appearance: textfield; /* Remove number input arrows in Firefox */
+        transition: background-color 0.1s ease; /* Smooth transition for color change */
+    }
+    /* Hide number input arrows in Chrome, Safari, Edge */
+    #pixelGridContainer input::-webkit-outer-spin-button,
+    #pixelGridContainer input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    #pixelGridContainer input[type=number] {
+      -moz-appearance: textfield; /* Firefox */
+    }
+
+    #pixelGridContainer input:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 8px rgba(97, 218, 251, 0.5);
+        outline: none;
+        z-index: 1; /* Keep focused element on top */
+    }
+
+    .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    button {
+      background-color: var(--button-bg);
+      color: var(--bg-color);
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 5px 15px rgba(97, 218, 251, 0.4);
+      letter-spacing: 1px;
+      flex-grow: 1;
+      min-width: 140px;
+    }
+
+    button:hover {
+      background-color: var(--button-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(33, 161, 241, 0.5);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 10px rgba(33, 161, 241, 0.3);
+    }
+
+    canvas {
+      background: var(--pixel-bg);
+      margin-top: 25px;
+      display: block;
+      border: 3px solid var(--accent-color);
+      border-radius: 8px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: optimize-contrast;
+      image-rendering: pixelated;
+      -ms-interpolation-mode: nearest-neighbor;
+      max-width: 100%;
+      height: auto;
+      transition: transform 0.3s ease;
+    }
+
+    canvas:hover {
+        transform: scale(1.02);
+    }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .fade-in {
+        animation: fadeInScale 0.3s ease-out forwards;
+    }
+
+    /* --- Modal Styles --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--modal-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: var(--modal-card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 15px 35px var(--shadow-color);
+      width: 95%;
+      max-width: 450px;
+      text-align: center;
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      position: relative;
+      direction: ltr;
+      box-sizing: border-box;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .close-button:hover {
+      color: var(--button-bg);
+    }
+
+    .modal-content h3 {
+      font-family: 'Cairo', sans-serif;
+      color: var(--accent-color);
+      font-size: 1.6em;
+      margin-bottom: 15px;
+    }
+
+    .modal-content p {
+      margin-bottom: 10px;
+      font-size: 1em;
+      line-height: 1.5;
+    }
+
+    .modal-content .price {
+      font-size: 1.8em;
+      color: var(--success-color);
+      font-weight: bold;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .contact-link {
+        color: var(--button-bg);
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.2s ease;
+    }
+    .contact-link:hover {
+        color: var(--button-hover);
+    }
+
+    .order-form {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px dashed var(--border-color);
+        text-align: left;
+        display: none;
+    }
+
+    .order-form.active {
+        display: block;
+    }
+
+    .order-form label {
+        margin-bottom: 5px;
+        font-size: 0.95em;
+    }
+
+    .order-form input[type="text"],
+    .order-form textarea {
+        width: calc(100% - 16px);
+        margin-bottom: 10px;
+        padding: 10px;
+        font-size: 0.95em;
+    }
+    .order-form textarea {
+        min-height: 70px;
+    }
+
+    .message-box {
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: 8px;
+        border-radius: 8px;
+        margin-top: 10px;
+        font-size: 0.85em;
+        text-align: center;
+        color: var(--text-color);
+    }
+    .message-box.success {
+        background-color: rgba(76, 175, 80, 0.2);
+        color: var(--success-color);
+    }
+    .message-box.error {
+        background-color: rgba(244, 67, 54, 0.2);
+        color: var(--error-color);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+        body {
+            padding: 15px 5px;
+        }
+        .main-layout {
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .color-palette {
+            width: 95%;
+            max-height: 40vh;
+            margin: 0 auto 15px auto;
+            padding: 15px;
+        }
+        .container {
+            width: 95%;
+            margin-bottom: 15px;
+            padding: 20px;
+        }
+        h2 {
+            font-size: 1.5em;
+        }
+        .header-buttons {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-buttons button {
+            width: 90%;
+            font-size: 1.1em;
+            padding: 12px 20px;
+        }
+        button {
+            font-size: 1em;
+            padding: 10px 20px;
+            min-width: unset;
+            flex-grow: unset;
+            width: 100%;
+        }
+        .button-group {
+            flex-direction: column;
+        }
+        .input-dimensions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .input-dimensions > div {
+            min-width: unset;
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 15px;
+      }
+      h2 {
+        font-size: 1.4em;
+      }
+      label {
+        font-size: 0.9em;
+      }
+      input[type="text"],
+      textarea {
+        font-size: 0.9em;
+        padding: 10px;
+      }
+      .modal-content {
+        padding: 15px;
+      }
+      .modal-content h3 {
+        font-size: 1.3em;
+      }
+      .modal-content .price {
+        font-size: 1.6em;
+      }
+      :root {
+          --grid-cell-size: 20px; /* Smaller cells on small screens */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header-buttons">
+    <button onclick="openPurchaseModal()">Purchase Website or Special Customizations</button>
+  </div>
+
+  <div class="main-layout">
+    <div class="color-palette">
+      <h3>Color Palette</h3>
+      <div id="colorList">
+        </div>
+    </div>
+
+    <div class="container">
+      <h2>🎨 Pixel Art from Grid</h2>
+
+      <div class="input-dimensions">
+        <div>
+            <label for="gridWidth">Grid Width:</label>
+            <input type="number" id="gridWidth" value="16" min="1" max="64">
+        </div>
+        <div>
+            <label for="gridHeight">Grid Height:</label>
+            <input type="number" id="gridHeight" value="16" min="1" max="64">
+        </div>
+        <button onclick="generatePixelGrid()">Create Grid</button>
+      </div>
+
+      <label for="imageName">Image Name:</label>
+      <input type="text" id="imageName" value="My_Pixel_Art">
+
+      <div id="pixelGridContainer">
+        </div>
+
+      <div class="button-group">
+        <button onclick="drawPixelArt()">Show Art</button>
+        <button onclick="downloadPixelArt()">Download Image</button>
+        <button onclick="clearPixelGrid()">Clear Grid</button> </div>
+    </div>
+  </div>
+
+  <canvas id="canvas" width="32" height="32"></canvas>
+
+  <div class="modal-overlay" id="purchaseModal">
+    <div class="modal-content">
+      <button class="close-button" onclick="closePurchaseModal()">✖</button>
+      <h3>Purchase Website or Special Customizations</h3>
+      <p>
+        If you are interested in creating your own professional website, or wish to get custom modifications for any project, please contact us.
+      </p>
+      <p>
+        <span class="price">Price: Starting from 1000 EGP</span>
+        <br>
+        For inquiries, please contact via number: <br>
+        <a href="tel:+201210409574" class="contact-link">01210409574</a>
+      </p>
+
+      <div class="button-group">
+          <button onclick="window.location.href = 'tel:+201210409574'">Contact 01210409574</button>
+          <button onclick="toggleCustomOrderForm()">Order Another Custom Website</button>
+      </div>
+
+      <div class="order-form" id="customOrderForm">
+          <h4>Custom Website Order Details:</h4>
+          <label for="clientName">Full Name:</label>
+          <input type="text" id="clientName" placeholder="e.g., Ahmed Mohamed Ali">
+
+          <label for="clientPhone">Phone Number:</label>
+          <input type="text" id="clientPhone" placeholder="e.g., 01234567890">
+
+          <label for="clientCountry">Country:</label>
+          <input type="text" id="clientCountry" value="Egypt" placeholder="e.g., Egypt">
+
+          <label for="clientCity">City:</label>
+          <input type="text" id="clientCity" placeholder="e.g., Cairo">
+
+          <label for="projectName">Proposed Project Name:</label>
+          <input type="text" id="projectName" placeholder="e.g., 'Modern Fashion' Clothing Store">
+
+          <label for="projectPurpose">Purpose of the Website (e.g., personal brand, e-commerce, blog):</label>
+          <textarea id="projectPurpose" placeholder="Briefly explain why you need the website and its goals"></textarea>
+
+          <button onclick="submitCustomOrder()">Submit Order</button>
+          <div id="orderMessage" class="message-box"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    const colors = {
+      // Numbers
+      "0": { hex: "transparent", name_en: "Transparent" },
+      "1": { hex: "#FFFFFF", name_en: "White" },
+      "2": { hex: "#FF0000", name_en: "Red" },
+      "3": { hex: "#00FF00", name_en: "Green" },
+      "4": { hex: "#0000FF", name_en: "Blue" },
+      "5": { hex: "#FFFF00", name_en: "Yellow" },
+      "6": { hex: "#00FFFF", name_en: "Cyan" },
+      "7": { hex: "#FF8800", name_en: "Orange" },
+      "8": { hex: "#A0A0A0", name_en: "Medium Gray" },
+      "9": { hex: "#000000", name_en: "Black" },
+
+      // English Letters
+      "a": { hex: "#FFC0CB", name_en: "Pink" },
+      "b": { hex: "#800080", name_en: "Purple" },
+      "c": { hex: "#A52A2A", name_en: "Brown" },
+      "d": { hex: "#ADD8E6", name_en: "Light Blue" },
+      "e": { hex: "#FFD700", name_en: "Gold" },
+      "f": { hex: "#C0C0C0", name_en: "Silver" },
+      "g": { hex: "#FF7F50", name_en: "Coral" },
+      "h": { hex: "#DA70D6", name_en: "Orchid" },
+      "i": { hex: "#F0E68C", name_en: "Khaki" },
+      "j": { hex: "#4682B4", name_en: "Steel Blue" },
+      "k": { hex: "#D2B48C", name_en: "Tan" },
+      "l": { hex: "#F08080", name_en: "Light Coral" },
+      "m": { hex: "#20B2AA", name_en: "Light Sea Green" },
+      "n": { hex: "#7B68EE", name_en: "Medium Purple" },
+      "o": { hex: "#BDB76B", name_en: "Dark Khaki" },
+      "p": { hex: "#008080", name_en: "Teal" },
+      "q": { hex: "#FF4500", name_en: "Orange Red" },
+      "r": { hex: "#4B0082", name_en: "Indigo" },
+      "s": { hex: "#ADFF2F", name_en: "Green Yellow" },
+      "t": { hex: "#FF6347", name_en: "Tomato" },
+      "u": { hex: "#7FFFD4", name_en: "Aquamarine" },
+      "v": { hex: "#F5DEB3", name_en: "Wheat" },
+      "w": { hex: "#8A2BE2", name_en: "Blue Violet" },
+      "x": { hex: "#DC143C", name_en: "Crimson" },
+      "y": { hex: "#006400", name_en: "Dark Green" },
+      "z": { hex: "#B22222", name_en: "Firebrick" },
+
+      // Arabic Letters (kept for consistency with the original color mapping logic)
+      "ا": { hex: "#8B0000", name_en: "Dark Red" },
+      "ب": { hex: "#00008B", name_en: "Dark Blue" },
+      "ت": { hex: "#008B8B", name_en: "Dark Cyan" },
+      "ث": { hex: "#8B8B00", name_en: "Dark Olive Green" },
+      "ج": { hex: "#FFB6C1", name_en: "Light Pink" },
+      "ح": { hex: "#FFA07A", name_en: "Light Salmon" },
+      "خ": { hex: "#2F4F4F", name_en: "Dark Slate Gray" },
+      "د": { hex: "#CD5C5C", name_en: "Indian Red" },
+      "ذ": { hex: "#483D8B", name_en: "Dark Slate Blue" },
+      "ر": { hex: "#9ACD32", name_en: "Yellow Green" },
+      "ز": { hex: "#FFDAB9", name_en: "Peach Puff" },
+      "س": { hex: "#DDA0DD", name_en: "Plum" },
+      "ش": { hex: "#9370DB", name_en: "Medium Purple" },
+      "ص": { hex: "#8B4513", name_en: "Saddle Brown" },
+      "ض": { hex: "#A0522D", name_en: "Sienna" },
+      "ط": { hex: "#C71585", name_en: "Medium Violet Red" },
+      "ظ": { hex: "#DB7093", name_en: "Pale Violet Red" },
+      "ع": { hex: "#5F9EA0", name_en: "Cadet Blue" },
+      "غ": { hex: "#FFFAFA", name_en: "Snow" },
+      "ف": { hex: "#FAEBD7", name_en: "Antique White" },
+      "ق": { hex: "#00FF7F", name_en: "Spring Green" },
+      "ك": { hex: "#6495ED", name_en: "Cornflower Blue" },
+      "ل": { hex: "#E6E6FA", name_en: "Lavender" },
+      "م": { hex: "#FFF0F5", name_en: "Lavender Blush" },
+      "ن": { hex: "#800000", name_en: "Maroon" },
+      "ه": { hex: "#FFDAB9", name_en: "Peach Puff" },
+      "و": { hex: "#EEE8AA", name_en: "Pale Goldenrod" },
+      "ي": { hex: "#AFEEEE", name_en: "Pale Turquoise" },
+    };
+
+    let currentGridWidth = 16;
+    let currentGridHeight = 16;
+    const DEFAULT_CELL_BG = '#2b3038'; // لون الخلفية الافتراضي لمربعات الإدخال
+
+    function applyCellColor(cell) {
+      const char = cell.value.toLowerCase();
+      const colorInfo = colors[char];
+      cell.style.backgroundColor = (char === '0' || !colorInfo) ? DEFAULT_CELL_BG : colorInfo.hex;
+    }
+
+    function generatePixelGrid() {
+      const gridWidthInput = document.getElementById("gridWidth");
+      const gridHeightInput = document.getElementById("gridHeight");
+      const pixelGridContainer = document.getElementById("pixelGridContainer");
+
+      const width = parseInt(gridWidthInput.value);
+      const height = parseInt(gridHeightInput.value);
+
+      if (isNaN(width) || isNaN(height) || width < 1 || height < 1 || width > 64 || height > 64) {
+        alert("Please enter valid grid dimensions (1-64 for both width and height).");
+        return;
+      }
+
+      currentGridWidth = width;
+      currentGridHeight = height;
+
+      pixelGridContainer.innerHTML = ''; // Clear existing grid
+      pixelGridContainer.style.gridTemplateColumns = `repeat(${width}, var(--grid-cell-size))`;
+
+      // Create cells, building from bottom-left to top-right conceptually
+      for (let y = height - 1; y >= 0; y--) { // Iterate rows from bottom to top
+        for (let x = 0; x < width; x++) { // Iterate columns from left to right
+          const cell = document.createElement('input');
+          cell.type = 'text';
+          cell.maxLength = '1';
+          cell.dataset.row = y; // Store row index (0 is bottom)
+          cell.dataset.col = x; // Store column index (0 is left)
+          cell.placeholder = '0'; // Default to transparent
+          cell.style.backgroundColor = DEFAULT_CELL_BG; // Set default background
+
+          // Add event listener to update background color and redraw art
+          cell.addEventListener('input', (event) => {
+            event.target.value = event.target.value.toLowerCase(); // Ensure lowercase
+            applyCellColor(event.target); // Apply background color based on input
+            drawPixelArt(); // Redraw art after individual input
+          });
+          pixelGridContainer.appendChild(cell);
+        }
+      }
+      drawPixelArt(); // Redraw art after generating new grid
+    }
+
+    function clearPixelGrid() {
+        const pixelGridContainer = document.getElementById("pixelGridContainer");
+        const gridCells = pixelGridContainer.querySelectorAll('input[type="text"]');
+        gridCells.forEach(cell => {
+            cell.value = ''; // Clear the text
+            applyCellColor(cell); // Reset background color to default
+        });
+        drawPixelArt(); // Redraw canvas after clearing
+    }
+
+    function drawPixelArt() {
+      const pixelGridContainer = document.getElementById("pixelGridContainer");
+      const gridCells = pixelGridContainer.querySelectorAll('input[type="text"]');
+
+      if (gridCells.length === 0) {
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = 32;
+        canvas.height = 32;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#888";
+        ctx.font = "16px 'Cairo', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Create a grid!", canvas.width / 2, canvas.height / 2);
+        return;
+      }
+
+      const width = currentGridWidth;
+      const height = currentGridHeight;
+
+      let pixelSize = 16;
+      const maxCanvasWidth = window.innerWidth * 0.8;
+      const maxCanvasHeight = window.innerHeight * 0.5;
+
+      if (width > 0 && height > 0) {
+        pixelSize = Math.min(
+          Math.floor(maxCanvasWidth / width),
+          Math.floor(maxCanvasHeight / height),
+          32
+        );
+        pixelSize = Math.max(pixelSize, 4);
+      } else {
+          pixelSize = 16;
+      }
+
+      const canvas = document.getElementById("canvas");
+      canvas.width = width * pixelSize;
+      canvas.height = height * pixelSize;
+      const ctx = canvas.getContext("2d");
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      gridCells.forEach(cell => {
+        const x = parseInt(cell.dataset.col);
+        const y_input = parseInt(cell.dataset.row); // This is the row from input (0 is bottom)
+
+        // Convert input's bottom-up Y to canvas's top-down Y
+        const y_canvas = height - 1 - y_input;
+
+        const char = cell.value.toLowerCase() || '0'; // Default to '0' if empty
+        const colorInfo = colors[char];
+        const colorHex = colorInfo ? colorInfo.hex : "transparent";
+
+        if (colorHex !== "transparent") {
+          ctx.fillStyle = colorHex;
+          ctx.fillRect(x * pixelSize, y_canvas * pixelSize, pixelSize, pixelSize);
+        }
+      });
+
+      canvas.classList.remove('fade-in');
+      void canvas.offsetWidth;
+      canvas.classList.add('fade-in');
+    }
+
+    function downloadPixelArt() {
+      const canvas = document.getElementById("canvas");
+      const imageNameInput = document.getElementById("imageName");
+      let filename = imageNameInput.value.trim();
+
+      if (filename === "") {
+          filename = "My_Pixel_Art";
+      }
+
+      filename = filename.replace(/[^a-z0-9_\-]/gi, '_').toLowerCase();
+
+      const link = document.createElement('a');
+      link.download = filename + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function populateColorPalette() {
+      const colorListDiv = document.getElementById("colorList");
+      colorListDiv.innerHTML = '';
+
+      const sortedKeys = Object.keys(colors).sort((a, b) => {
+        const isNumA = !isNaN(parseInt(a));
+        const isNumB = !isNaN(parseInt(b));
+        const isEngA = a.match(/[a-zA-Z]/);
+        const isEngB = b.match(/[a-zA-Z]/);
+        const isArbA = a.match(/[\u0600-\u06FF]/);
+        const isArbB = b.match(/[\u0600-\u06FF]/);
+
+        if (isNumA && !isNumB) return -1;
+        if (!isNumA && isNumB) return 1;
+        if (isNumA && isNumB) return parseInt(a) - parseInt(b);
+
+        if (isEngA && !isEngB) return -1;
+        if (!isEngA && isEngB) return 1;
+        if (isEngA && isEngB) return a.localeCompare(b, 'en', { sensitivity: 'base' });
+
+        if (isArbA && !isArbB) return -1;
+        if (!isArbA && isArbB) return 1;
+        if (isArbA && isArbB) return a.localeCompare(b, 'ar', { sensitivity: 'base' });
+
+        return 0;
+      });
+
+
+      for (const char of sortedKeys) {
+        const colorInfo = colors[char];
+        if (colorInfo.hex === "transparent") continue;
+
+        const colorItem = document.createElement('div');
+        colorItem.className = 'color-item';
+
+        const colorBox = document.createElement('div');
+        colorBox.className = 'color-box';
+        colorBox.style.backgroundColor = colorInfo.hex;
+
+        const colorChar = document.createElement('span');
+        colorChar.className = 'color-code-char';
+        colorChar.textContent = char;
+
+        const colorNameHex = document.createElement('div');
+        colorNameHex.className = 'color-name-hex';
+
+        const colorName = document.createElement('span');
+        colorName.className = 'color-name';
+        colorName.textContent = colorInfo.name_en;
+
+        const colorHex = document.createElement('span');
+        colorHex.className = 'color-hex';
+        colorHex.textContent = colorInfo.hex;
+
+        colorNameHex.appendChild(colorName);
+        colorNameHex.appendChild(colorHex);
+
+        colorItem.appendChild(colorBox);
+        colorItem.appendChild(colorChar);
+        colorItem.appendChild(colorNameHex);
+
+        colorListDiv.appendChild(colorItem);
+      }
+    }
+
+    // --- Modal Functions ---
+    function openPurchaseModal() {
+        const modal = document.getElementById("purchaseModal");
+        modal.classList.add("active");
+        document.getElementById("customOrderForm").classList.remove("active");
+        document.getElementById("orderMessage").textContent = "";
+        document.getElementById("orderMessage").className = "message-box";
+    }
+
+    function closePurchaseModal() {
+        const modal = document.getElementById("purchaseModal");
+        modal.classList.remove("active");
+    }
+
+    function toggleCustomOrderForm() {
+        const form = document.getElementById("customOrderForm");
+        form.classList.toggle("active");
+        document.getElementById("orderMessage").textContent = "";
+        document.getElementById("orderMessage").className = "message-box";
+        if (form.classList.contains("active")) {
+            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    function submitCustomOrder() {
+        const clientName = document.getElementById("clientName").value.trim();
+        const clientPhone = document.getElementById("clientPhone").value.trim();
+        const clientCountry = document.getElementById("clientCountry").value.trim();
+        const clientCity = document.getElementById("clientCity").value.trim();
+        const projectName = document.getElementById("projectName").value.trim();
+        const projectPurpose = document.getElementById("projectPurpose").value.trim();
+        const orderMessageDiv = document.getElementById("orderMessage");
+
+        orderMessageDiv.textContent = "";
+        orderMessageDiv.className = "message-box";
+
+        if (!clientName || !clientPhone || !projectName || !projectPurpose) {
+            orderMessageDiv.textContent = "Please fill in all required fields (Name, Phone Number, Project Name, Purpose).";
+            orderMessageDiv.classList.add("error");
+            return;
+        }
+
+        const recipientEmail = "mody9000000z@gmail.com";
+        const subject = `Custom Website Request from ${clientName}`;
+        const body = `
+            Full Name: ${clientName}
+            Phone Number: ${clientPhone}
+            Country: ${clientCountry}
+            City: ${clientCity}
+            Proposed Project Name: ${projectName}
+            Purpose of the Website: ${projectPurpose}
+        `;
+
+        const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoLink;
+
+        orderMessageDiv.textContent = "Your request has been received successfully! Your email client will open to send the details.";
+        orderMessageDiv.classList.add("success");
+
+        // Optionally clear the form after "submission"
+        document.getElementById("clientName").value = "";
+        document.getElementById("clientPhone").value = "";
+        document.getElementById("clientCountry").value = "Egypt";
+        document.getElementById("clientCity").value = "";
+        document.getElementById("projectName").value = "";
+        document.getElementById("projectPurpose").value = "";
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      populateColorPalette();
+      // Set default grid dimensions and generate it on load
+      document.getElementById("gridWidth").value = "16";
+      document.getElementById("gridHeight").value = "16";
+      generatePixelGrid();
+
+      // Add paste event listener to the grid container
+      const pixelGridContainer = document.getElementById("pixelGridContainer");
+      pixelGridContainer.addEventListener('paste', (event) => {
+        event.preventDefault(); // Prevent default paste behavior
+
+        const pastedText = event.clipboardData.getData('text/plain').toLowerCase();
+        if (!pastedText) return;
+
+        const activeElement = document.activeElement;
+        if (activeElement && activeElement.tagName === 'INPUT' && activeElement.closest('#pixelGridContainer')) {
+          const startRow = parseInt(activeElement.dataset.row);
+          let startCol = parseInt(activeElement.dataset.col);
+
+          let charIndex = 0;
+          let currentRow = startRow;
+          let currentCol = startCol;
+
+          // Collect all cells to update them efficiently
+          const cellsToUpdate = [];
+
+          while (charIndex < pastedText.length) {
+            // Find the cell using querySelector based on data attributes
+            const targetCell = pixelGridContainer.querySelector(`input[data-row="${currentRow}"][data-col="${currentCol}"]`);
+
+            if (targetCell) {
+              targetCell.value = pastedText[charIndex];
+              applyCellColor(targetCell); // Apply background color for pasted cell
+              cellsToUpdate.push(targetCell); // Add to list for potential focus/selection later
+            } else {
+              // If we run out of cells, stop pasting
+              break;
+            }
+
+            charIndex++;
+            currentCol++;
+
+            // Move to the next row if we reach the end of the current row
+            if (currentCol >= currentGridWidth) {
+              currentCol = 0;
+              currentRow--; // Move up to the next row (since rows are indexed bottom-up)
+              if (currentRow < 0) { // If we go above the top row, stop
+                break;
+              }
+            }
+          }
+          drawPixelArt(); // Redraw art after pasting
+        }
+      });
+    });
+  </script>
+</body>
+</html>
