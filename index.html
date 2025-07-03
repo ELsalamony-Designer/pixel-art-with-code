@@ -20,7 +20,7 @@
       --modal-card-bg: #ffffff; /* White Modal Card */
       --success-color: #28a745;  /* Green Success */
       --error-color: #dc3545;    /* Red Error */
-      /* --grid-cell-size: 25px; */ /* This will now be dynamic */
+      --grid-cell-size: 25px;    /* Size for grid input cells */
 
       /* Custom colors for dynamic text based on background */
       --dark-text: #333333;
@@ -246,22 +246,24 @@
         display: grid;
         gap: 1px;
         border: 1px solid var(--border-color);
-        background-color: var(--bg-color);
-        margin-top: 25px; /* Added margin-top to separate from previous elements */
+        padding: 5px;
+        background-color: var(--bg-color); /* Light background for grid area */
+        max-width: 100%;
         margin-bottom: 20px;
         border-radius: 8px;
-        box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.1); /* Lighter inset shadow */
         justify-content: center;
-        /* Removed max-height and overflow-y: auto here */
-        /* Size will be determined by JS and dynamically set on #canvas-and-grid-wrapper */
+        max-height: 500px; /* Max height for scrolling */
+        overflow-y: auto; /* Enable vertical scrolling */
     }
 
     #pixelGridContainer input {
-        /* width and height will be set dynamically by JS */
+        width: var(--grid-cell-size);
+        height: var(--grid-cell-size);
         padding: 0;
         margin: 0;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        background-color: var(--card-bg);
+        border: 1px solid rgba(0, 0, 0, 0.05); /* Lighter border for cells */
+        background-color: var(--card-bg); /* Default background for individual cells */
         text-align: center;
         font-family: 'Press Start 2P', cursive;
         font-size: 0.8em;
@@ -336,56 +338,26 @@
       box-shadow: 0 3px 10px rgba(153, 50, 204, 0.2);
     }
 
-    #canvas-and-grid-wrapper {
-        position: relative;
-        width: auto; /* Will be set by JS based on grid dimensions */
-        height: auto; /* Will be set by JS based on grid dimensions */
-        margin-top: 25px;
-        display: inline-block; /* To wrap around content */
-        border: 3px solid var(--accent-color);
-        border-radius: 8px;
-        box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
-        overflow: hidden; /* Ensure content respects border-radius */
-    }
-    
-    #canvas {
-        background: var(--pixel-bg);
-        display: block;
-        image-rendering: optimizeSpeed;
-        image-rendering: -moz-crisp-edges;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: optimize-contrast;
-        image-rendering: pixelated;
-        -ms-interpolation-mode: nearest-neighbor;
-        max-width: 100%;
-        height: auto;
-        transition: transform 0.3s ease;
+    canvas {
+      background: var(--pixel-bg);
+      margin-top: 25px;
+      display: block;
+      border: 3px solid var(--accent-color);
+      border-radius: 8px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); /* Lighter shadow for canvas */
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: optimize-contrast;
+      image-rendering: pixelated;
+      -ms-interpolation-mode: nearest-neighbor;
+      max-width: 100%;
+      height: auto;
+      transition: transform 0.3s ease;
     }
 
-    #canvas:hover {
+    canvas:hover {
         transform: scale(1.02);
-    }
-
-    /* Overlay grid for input cells */
-    #pixelGridContainer.overlay-grid {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%; /* Take full width of wrapper */
-        height: 100%; /* Take full height of wrapper */
-        background: transparent; /* Make background transparent */
-        border: none; /* Remove border from grid itself */
-        box-shadow: none; /* Remove shadow */
-        margin: 0; /* Remove margin */
-        padding: 0; /* Remove padding */
-        gap: 0; /* Remove gap between cells for pixel-perfect overlay */
-    }
-
-    #pixelGridContainer.overlay-grid input {
-        border: 1px solid rgba(0,0,0,0.1); /* Keep a subtle border for grid cells */
-        background-color: rgba(255,255,255,0.05); /* Slightly transparent white for cells */
-        font-size: 0.7em; /* Adjust font size to fit smaller cells */
-        line-height: 1; /* Adjust line height to center text vertically */
     }
 
     /* Animations */
@@ -748,11 +720,8 @@
           <input type="file" id="imageUpload" accept="image/*">
           <label for="imageUpload" class="custom-file-upload btn-pulse">Upload Image ⬆️</label>
       </div>
-      
-      <div id="canvas-and-grid-wrapper">
-        <canvas id="canvas"></canvas>
-        <div id="pixelGridContainer" class="overlay-grid">
-        </div>
+
+      <div id="pixelGridContainer">
       </div>
 
       <div class="button-group">
@@ -771,6 +740,8 @@
       </div>
     </div>
   </div>
+
+  <canvas id="canvas" width="32" height="32"></canvas>
 
   <div class="modal-overlay" id="purchaseModal">
     <div class="modal-content bounce-in">
@@ -833,77 +804,77 @@
       "0": { hex: "transparent", name_en: "Transparent" },
       "1": { hex: "#FFFFFF", name_en: "White" },
       "2": { hex: "#FF0000", name_en: "Red" },
-      "3": { hex: "#00FF00", name: "Green" },
-      "4": { hex: "#0000FF", name: "Blue" },
-      "5": { hex: "#FFFF00", name: "Yellow" },
-      "6": { hex: "#00FFFF", name: "Cyan" },
-      "7": { hex: "#FF8800", name: "Orange" },
-      "8": { hex: "#A0A0A0", name: "Medium Gray" },
-      "9": { hex: "#000000", name: "Black" },
+      "3": { hex: "#00FF00", name_en: "Green" },
+      "4": { hex: "#0000FF", name_en: "Blue" },
+      "5": { hex: "#FFFF00", name_en: "Yellow" },
+      "6": { hex: "#00FFFF", name_en: "Cyan" },
+      "7": { hex: "#FF8800", name_en: "Orange" },
+      "8": { hex: "#A0A0A0", name_en: "Medium Gray" },
+      "9": { hex: "#000000", name_en: "Black" },
 
       // English Letters
-      "a": { hex: "#FFC0CB", name: "Pink" },
-      "b": { hex: "#800080", name: "Purple" },
-      "c": { hex: "#A52A2A", name: "Brown" },
-      "d": { hex: "#ADD8E6", name: "Light Blue" },
-      "e": { hex: "#FFD700", name: "Gold" },
-      "f": { hex: "#C0C0C0", name: "Silver" },
-      "g": { hex: "#FF7F50", name: "Coral" },
-      "h": { hex: "#DA70D6", name: "Orchid" },
-      "i": { hex: "#F0E68C", name: "Khaki" },
-      "j": { hex: "#4682B4", name: "Steel Blue" },
-      "k": { hex: "#D2B48C", name: "Tan" },
-      "l": { hex: "#F08080", name: "Light Coral" },
-      "m": { hex: "#20B2AA", name: "Light Sea Green" },
-      "n": { hex: "#7B68EE", name: "Medium Purple" },
-      "o": { hex: "#BDB76B", name: "Dark Khaki" },
-      "p": { hex: "#008080", name: "Teal" },
-      "q": { hex: "#FF4500", name: "Orange Red" },
-      "r": { hex: "#4B0082", name: "Indigo" },
-      "s": { hex: "#ADFF2F", name: "Green Yellow" },
-      "t": { hex: "#FF6347", name: "Tomato" },
-      "u": { hex: "#7FFFD4", name: "Aquamarine" },
-      "v": { hex: "#F5DEB3", name: "Wheat" },
-      "w": { hex: "#8A2BE2", name: "Blue Violet" },
-      "x": { hex: "#DC143C", name: "Crimson" },
-      "y": { hex: "#006400", name: "Dark Green" },
-      "z": { hex: "#B22222", name: "Firebrick" },
+      "a": { hex: "#FFC0CB", name_en: "Pink" },
+      "b": { hex: "#800080", name_en: "Purple" },
+      "c": { hex: "#A52A2A", name_en: "Brown" },
+      "d": { hex: "#ADD8E6", name_en: "Light Blue" },
+      "e": { hex: "#FFD700", name_en: "Gold" },
+      "f": { hex: "#C0C0C0", name_en: "Silver" },
+      "g": { hex: "#FF7F50", name_en: "Coral" },
+      "h": { hex: "#DA70D6", name_en: "Orchid" },
+      "i": { hex: "#F0E68C", name_en: "Khaki" },
+      "j": { hex: "#4682B4", name_en: "Steel Blue" },
+      "k": { hex: "#D2B48C", name_en: "Tan" },
+      "l": { hex: "#F08080", name_en: "Light Coral" },
+      "m": { hex: "#20B2AA", name_en: "Light Sea Green" },
+      "n": { hex: "#7B68EE", name_en: "Medium Purple" },
+      "o": { hex: "#BDB76B", name_en: "Dark Khaki" },
+      "p": { hex: "#008080", name_en: "Teal" },
+      "q": { hex: "#FF4500", name_en: "Orange Red" },
+      "r": { hex: "#4B0082", name_en: "Indigo" },
+      "s": { hex: "#ADFF2F", name_en: "Green Yellow" },
+      "t": { hex: "#FF6347", name_en: "Tomato" },
+      "u": { hex: "#7FFFD4", name_en: "Aquamarine" },
+      "v": { hex: "#F5DEB3", name_en: "Wheat" },
+      "w": { hex: "#8A2BE2", name_en: "Blue Violet" },
+      "x": { hex: "#DC143C", name_en: "Crimson" },
+      "y": { hex: "#006400", name_en: "Dark Green" },
+      "z": { hex: "#B22222", name_en: "Firebrick" },
 
       // Arabic Letters (kept for consistency with the original color mapping logic)
-      "ا": { hex: "#8B0000", name: "Dark Red" },
-      "ب": { hex: "#00008B", name: "Dark Blue" },
-      "ت": { hex: "#008B8B", name: "Dark Cyan" },
-      "ث": { hex: "#8B8B00", name: "Dark Olive Green" },
-      "ج": { hex: "#FFB6C1", name: "Light Pink" },
-      "ح": { hex: "#FFA07A", name: "Light Salmon" },
-      "خ": { hex: "#2F4F4F", name: "Dark Slate Gray" },
-      "د": { hex: "#CD5C5C", name: "Indian Red" },
-      "ذ": { hex: "#483D8B", name: "Dark Slate Blue" },
-      "ر": { hex: "#9ACD32", name: "Yellow Green" },
-      "ز": { hex: "#FFDAB9", name: "Peach Puff" },
-      "س": { hex: "#DDA0DD", name: "Plum" },
-      "ش": { hex: "#9370DB", name: "Medium Purple" },
-      "ص": { hex: "#8B4513", name: "Saddle Brown" },
-      "ض": { hex: "#A0522D", name: "Sienna" },
-      "ط": { hex: "#C71585", name: "Medium Violet Red" },
-      "ظ": { hex: "#DB7093", name: "Pale Violet Red" },
-      "ع": { hex: "#5F9EA0", name: "Cadet Blue" },
-      "غ": { hex: "#FFFAFA", name: "Snow" },
-      "ف": { hex: "#FAEBD7", name: "Antique White" },
-      "ق": { hex: "#00FF7F", name: "Spring Green" },
-      "ك": { hex: "#6495ED", name: "Cornflower Blue" },
-      "ل": { hex: "#E6E6FA", name: "Lavender" },
-      "م": { hex: "#FFF0F5", name: "Lavender Blush" },
-      "ن": { hex: "#800000", name: "Maroon" },
-      "ه": { hex: "#FFDAB9", name: "Peach Puff" },
-      "و": { hex: "#EEE8AA", name: "Pale Goldenrod" },
-      "ي": { hex: "#AFEEEE", name: "Pale Turquoise" },
+      "ا": { hex: "#8B0000", name_en: "Dark Red" },
+      "ب": { hex: "#00008B", name_en: "Dark Blue" },
+      "ت": { hex: "#008B8B", name_en: "Dark Cyan" },
+      "ث": { hex: "#8B8B00", name_en: "Dark Olive Green" },
+      "ج": { hex: "#FFB6C1", name_en: "Light Pink" },
+      "ح": { hex: "#FFA07A", name_en: "Light Salmon" },
+      "خ": { hex: "#2F4F4F", name_en: "Dark Slate Gray" },
+      "د": { hex: "#CD5C5C", name_en: "Indian Red" },
+      "ذ": { hex: "#483D8B", name_en: "Dark Slate Blue" },
+      "ر": { hex: "#9ACD32", name_en: "Yellow Green" },
+      "ز": { hex: "#FFDAB9", name_en: "Peach Puff" },
+      "س": { hex: "#DDA0DD", name_en: "Plum" },
+      "ش": { hex: "#9370DB", name_en: "Medium Purple" },
+      "ص": { hex: "#8B4513", name_en: "Saddle Brown" },
+      "ض": { hex: "#A0522D", name_en: "Sienna" },
+      "ط": { hex: "#C71585", name_en: "Medium Violet Red" },
+      "ظ": { hex: "#DB7093", name_en: "Pale Violet Red" },
+      "ع": { hex: "#5F9EA0", name_en: "Cadet Blue" },
+      "غ": { hex: "#FFFAFA", name_en: "Snow" },
+      "ف": { hex: "#FAEBD7", name_en: "Antique White" },
+      "ق": { hex: "#00FF7F", name_en: "Spring Green" },
+      "ك": { hex: "#6495ED", name_en: "Cornflower Blue" },
+      "ل": { hex: "#E6E6FA", name_en: "Lavender" },
+      "م": { hex: "#FFF0F5", name_en: "Lavender Blush" },
+      "ن": { hex: "#800000", name_en: "Maroon" },
+      "ه": { hex: "#FFDAB9", name_en: "Peach Puff" },
+      "و": { hex: "#EEE8AA", name_en: "Pale Goldenrod" },
+      "ي": { hex: "#AFEEEE", name_en: "Pale Turquoise" },
     };
 
     let currentGridWidth = 16;
     let currentGridHeight = 16;
-    const DEFAULT_CELL_BG = '#F0F2F5';
-    const MAX_IMAGE_DIMENSION = 256;
+    const DEFAULT_CELL_BG = '#F0F2F5'; // Default background for input cells
+    const MAX_IMAGE_DIMENSION = 256; // Maximum width/height for uploaded images
 
     // Function to calculate Euclidean distance between two colors (RGB)
     function colorDistance(rgb1, rgb2) {
@@ -918,23 +889,26 @@
     function hexToRgb(hex) {
         if (!hex || hex === "transparent") return { r: 0, g: 0, b: 0, a: 0 };
         let r = 0, g = 0, b = 0;
+        // Handle 3-digit hex
         if (hex.length === 4) {
             r = parseInt(hex[1] + hex[1], 16);
             g = parseInt(hex[2] + hex[2], 16);
             b = parseInt(hex[3] + hex[3], 16);
-        } else if (hex.length === 7) {
+        } else if (hex.length === 7) { // Handle 6-digit hex
             r = parseInt(hex.substring(1, 3), 16);
             g = parseInt(hex.substring(3, 5), 16);
             b = parseInt(hex.substring(5, 7), 16);
         }
-        return { r, g, b, a: 255 };
+        return { r, g, b, a: 255 }; // Assume full opacity for hex colors
     }
 
     // Function to calculate perceived luminance (brightness) of an RGB color
     function getLuminance(r, g, b) {
+        // Standard formula for perceived luminance
         return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     }
 
+    // Pre-calculate RGB values for palette colors for faster lookup
     const paletteRgbColors = Object.entries(colors).map(([char, info]) => {
         if (info.hex === "transparent") {
             return { char, rgb: null, hex: info.hex };
@@ -942,12 +916,13 @@
         return { char, rgb: hexToRgb(info.hex), hex: info.hex };
     }).filter(item => item.rgb !== null);
 
+    // Function to find the closest color character from the palette
     function getClosestColorChar(r, g, b, a) {
-        if (a === 0) return '0';
+        if (a === 0) return '0'; // If transparent, map to '0'
 
         const targetRgb = { r, g, b };
         let minDistance = Infinity;
-        let closestChar = '0';
+        let closestChar = '0'; // Default to transparent if no close match
 
         for (const paletteColor of paletteRgbColors) {
             const dist = colorDistance(targetRgb, paletteColor.rgb);
@@ -966,12 +941,14 @@
       
       cell.style.backgroundColor = bgColor;
 
+      // Determine text color based on background luminance
       const rgb = hexToRgb(bgColor);
-      if (rgb.a === 0) {
-          cell.style.color = 'var(--dark-text)';
+      if (rgb.a === 0) { // If transparent, use a default readable color (e.g., light gray)
+          cell.style.color = 'var(--text-color)'; // Use default dark text for transparent
       } else {
           const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
-          cell.style.color = luminance > 0.5 ? 'var(--dark-text)' : 'var(--light-text)';
+          // Adjust threshold if needed for better contrast
+          cell.style.color = luminance > 0.5 ? 'var(--dark-text)' : 'var(--light-text)'; // Black for light, white for dark
       }
     }
 
@@ -979,8 +956,6 @@
       const gridWidthInput = document.getElementById("gridWidth");
       const gridHeightInput = document.getElementById("gridHeight");
       const pixelGridContainer = document.getElementById("pixelGridContainer");
-      const canvas = document.getElementById("canvas");
-      const canvasWrapper = document.getElementById("canvas-and-grid-wrapper");
 
       const width = parseInt(gridWidthInput.value);
       const height = parseInt(gridHeightInput.value);
@@ -993,49 +968,27 @@
       currentGridWidth = width;
       currentGridHeight = height;
 
-      pixelGridContainer.innerHTML = '';
-      
-      // Calculate pixelSize based on desired display size, then apply to canvas and grid
-      let pixelSize = 16; // Default starting size
-      const maxDisplayWidth = 400; // Max display width for the canvas/grid
-      const maxDisplayHeight = 400; // Max display height for the canvas/grid
+      pixelGridContainer.innerHTML = ''; // Clear existing grid
+      pixelGridContainer.style.gridTemplateColumns = `repeat(${width}, var(--grid-cell-size))`;
 
-      if (width > 0 && height > 0) {
-        pixelSize = Math.min(
-          Math.floor(maxDisplayWidth / width),
-          Math.floor(maxDisplayHeight / height),
-          32 // Cap individual pixel size for large grids
-        );
-        pixelSize = Math.max(pixelSize, 4); // Minimum pixel size
-      }
-
-      // Set canvas dimensions
-      canvas.width = width * pixelSize;
-      canvas.height = height * pixelSize;
-
-      // Set wrapper dimensions to match canvas dimensions
-      canvasWrapper.style.width = `${canvas.width}px`;
-      canvasWrapper.style.height = `${canvas.height}px`;
-
-      // Set grid columns to fit wrapper and calculate cell size
-      pixelGridContainer.style.gridTemplateColumns = `repeat(${width}, 1fr)`; // Use 1fr for flexible sizing
-      
-      for (let y = height - 1; y >= 0; y--) {
-        for (let x = 0; x < width; x++) {
+      // Create cells, building from bottom-left to top-right conceptually
+      for (let y = height - 1; y >= 0; y--) { // Iterate rows from bottom to top
+        for (let x = 0; x < width; x++) { // Iterate columns from left to right
           const cell = document.createElement('input');
           cell.type = 'text';
           cell.maxLength = '1';
-          cell.dataset.row = y;
-          cell.dataset.col = x;
-          cell.placeholder = '0';
-          // Cell dimensions will be handled by grid layout (1fr)
-          applyCellColor(cell);
+          cell.dataset.row = y; // Store row index (0 is bottom)
+          cell.dataset.col = x; // Store column index (0 is left)
+          cell.placeholder = '0'; // Default to transparent
+          applyCellColor(cell); // Set default background and text color
 
+          // Add event listener to update background color and move focus
           cell.addEventListener('input', (event) => {
             const currentCell = event.target;
-            currentCell.value = currentCell.value.toLowerCase();
-            applyCellColor(currentCell);
+            currentCell.value = currentCell.value.toLowerCase(); // Ensure lowercase
+            applyCellColor(currentCell); // Apply background and text color based on input
 
+            // Move focus to the next cell automatically
             const currentRow = parseInt(currentCell.dataset.row);
             const currentCol = parseInt(currentCell.dataset.col);
 
@@ -1044,16 +997,18 @@
 
             if (nextCol >= currentGridWidth) {
               nextCol = 0;
-              nextRow--;
+              nextRow--; // Move to the row above (since grid is built bottom-up)
             }
 
+            // Find the next cell and focus it if it exists
             const nextCell = pixelGridContainer.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
             if (nextCell) {
               nextCell.focus();
             }
-            drawPixelArt();
+            drawPixelArt(); // Redraw art after individual input
           });
 
+          // Add event listener for Backspace to move focus backwards
           cell.addEventListener('keydown', (event) => {
             if (event.key === 'Backspace' && event.target.value === '') {
                 const currentCell = event.target;
@@ -1065,44 +1020,43 @@
 
                 if (prevCol < 0) {
                     prevCol = currentGridWidth - 1;
-                    prevRow++;
+                    prevRow++; // Move to the row below (since grid is built bottom-up)
                 }
 
                 const prevCell = pixelGridContainer.querySelector(`input[data-row="${prevRow}"][data-col="${prevCol}"]`);
                 if (prevCell) {
                     prevCell.focus();
-                    event.preventDefault();
+                    event.preventDefault(); // Prevent default backspace behavior (deleting from previous cell)
                 }
             }
           });
+
+
           pixelGridContainer.appendChild(cell);
         }
       }
-      drawPixelArt();
+      drawPixelArt(); // Redraw art after generating new grid
     }
 
     function clearPixelGrid() {
         const pixelGridContainer = document.getElementById("pixelGridContainer");
         const gridCells = pixelGridContainer.querySelectorAll('input[type="text"]');
         gridCells.forEach(cell => {
-            cell.value = '';
-            applyCellColor(cell);
+            cell.value = ''; // Clear the text
+            applyCellColor(cell); // Reset background and text color to default
         });
-        drawPixelArt();
+        drawPixelArt(); // Redraw canvas after clearing
     }
 
     function drawPixelArt() {
       const pixelGridContainer = document.getElementById("pixelGridContainer");
       const gridCells = pixelGridContainer.querySelectorAll('input[type="text"]');
-      const canvas = document.getElementById("canvas");
-      const ctx = canvas.getContext("2d");
-      const canvasWrapper = document.getElementById("canvas-and-grid-wrapper");
 
       if (gridCells.length === 0) {
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
         canvas.width = 32;
         canvas.height = 32;
-        canvasWrapper.style.width = `${canvas.width}px`;
-        canvasWrapper.style.height = `${canvas.height}px`;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "var(--text-color)";
         ctx.font = "16px 'Cairo', sans-serif";
@@ -1114,19 +1068,36 @@
       const width = currentGridWidth;
       const height = currentGridHeight;
 
-      // Calculate pixel size based on current canvas dimensions
-      // This is crucial for matching the overlay grid
-      const pixelSize = canvas.width / width; 
+      let pixelSize = 16;
+      const maxCanvasWidth = window.innerWidth * 0.8;
+      const maxCanvasHeight = window.innerHeight * 0.5;
+
+      if (width > 0 && height > 0) {
+        pixelSize = Math.min(
+          Math.floor(maxCanvasWidth / width),
+          Math.floor(maxCanvasHeight / height),
+          32
+        );
+        pixelSize = Math.max(pixelSize, 4);
+      } else {
+          pixelSize = 16;
+      }
+
+      const canvas = document.getElementById("canvas");
+      canvas.width = width * pixelSize;
+      canvas.height = height * pixelSize;
+      const ctx = canvas.getContext("2d");
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       gridCells.forEach(cell => {
         const x = parseInt(cell.dataset.col);
-        const y_input = parseInt(cell.dataset.row);
+        const y_input = parseInt(cell.dataset.row); // This is the row from input (0 is bottom)
 
+        // Convert input's bottom-up Y to canvas's top-down Y
         const y_canvas = height - 1 - y_input;
 
-        const char = cell.value.toLowerCase() || '0';
+        const char = cell.value.toLowerCase() || '0'; // Default to '0' if empty
         const colorInfo = colors[char];
         const colorHex = colorInfo ? colorInfo.hex : "transparent";
 
@@ -1171,14 +1142,16 @@
             return;
         }
 
-        for (let y = height - 1; y >= 0; y--) {
+        // Iterate rows from top to bottom for output string (standard reading order)
+        for (let y = height - 1; y >= 0; y--) { // Corresponds to y_input
             for (let x = 0; x < width; x++) {
+                // Find the cell based on its dataset attributes
                 const cell = pixelGridContainer.querySelector(`input[data-row="${y}"][data-col="${x}"]`);
                 if (cell) {
-                    code += (cell.value || '0');
+                    code += (cell.value || '0'); // Use '0' for empty cells
                 }
             }
-            if (y > 0) {
+            if (y > 0) { // Add newline for all but the last row
                 code += '\n';
             }
         }
@@ -1241,7 +1214,7 @@
 
         const colorName = document.createElement('span');
         colorName.className = 'color-name';
-        colorName.textContent = colorInfo.name; /* Changed from name_en to name */
+        colorName.textContent = colorInfo.name_en;
 
         const colorHex = document.createElement('span');
         colorHex.className = 'color-hex';
@@ -1273,6 +1246,7 @@
                 let imgWidth = img.width;
                 let imgHeight = img.height;
 
+                // Resize image if it's too large, maintaining aspect ratio
                 if (imgWidth > MAX_IMAGE_DIMENSION || imgHeight > MAX_IMAGE_DIMENSION) {
                     const aspectRatio = imgWidth / imgHeight;
                     if (imgWidth > imgHeight) {
@@ -1282,6 +1256,7 @@
                         imgHeight = MAX_IMAGE_DIMENSION;
                         imgWidth = Math.round(imgHeight * aspectRatio);
                     }
+                    // Ensure dimensions don't exceed MAX_IMAGE_DIMENSION after scaling
                     if (imgWidth > MAX_IMAGE_DIMENSION) imgWidth = MAX_IMAGE_DIMENSION;
                     if (imgHeight > MAX_IMAGE_DIMENSION) imgHeight = MAX_IMAGE_DIMENSION;
                 }
@@ -1294,7 +1269,7 @@
                 document.getElementById("gridWidth").value = imgWidth;
                 document.getElementById("gridHeight").value = imgHeight;
 
-                generatePixelGrid(); // This will also update canvas and wrapper dimensions
+                generatePixelGrid();
 
                 const imageData = tempCtx.getImageData(0, 0, imgWidth, imgHeight).data;
                 const pixelGridContainer = document.getElementById("pixelGridContainer");
@@ -1332,9 +1307,10 @@
         document.getElementById("customOrderForm").classList.remove("active");
         document.getElementById("orderMessage").textContent = "";
         document.getElementById("orderMessage").className = "message-box";
+        // Add bounce-in animation to modal content when it opens
         const modalContent = modal.querySelector('.modal-content');
         modalContent.classList.remove('bounce-in');
-        void modalContent.offsetWidth;
+        void modalContent.offsetWidth; // Trigger reflow
         modalContent.classList.add('bounce-in');
     }
 
@@ -1388,6 +1364,7 @@
         orderMessageDiv.textContent = "Your request has been received successfully! Your email client will open to send the details. ✅";
         orderMessageDiv.classList.add("success");
 
+        // Optionally clear the form after "submission"
         document.getElementById("clientName").value = "";
         document.getElementById("clientPhone").value = "";
         document.getElementById("clientCountry").value = "Egypt";
@@ -1403,9 +1380,10 @@
       document.getElementById("gridHeight").value = "16";
       generatePixelGrid();
 
+      // Add paste event listener to the grid container
       const pixelGridContainer = document.getElementById("pixelGridContainer");
       pixelGridContainer.addEventListener('paste', (event) => {
-        event.preventDefault();
+        event.preventDefault(); // Prevent default paste behavior
 
         const pastedText = event.clipboardData.getData('text/plain').toLowerCase();
         if (!pastedText) return;
@@ -1420,30 +1398,34 @@
           let currentCol = startCol;
 
           while (charIndex < pastedText.length) {
+            // Find the cell using querySelector based on data attributes
             const targetCell = pixelGridContainer.querySelector(`input[data-row="${currentRow}"][data-col="${currentCol}"]`);
 
             if (targetCell) {
               targetCell.value = pastedText[charIndex];
-              applyCellColor(targetCell);
+              applyCellColor(targetCell); // Apply background and text color for pasted cell
             } else {
+              // If we run out of cells, stop pasting
               break;
             }
 
             charIndex++;
             currentCol++;
 
+            // Move to the next row if we reach the end of the current row
             if (currentCol >= currentGridWidth) {
               currentCol = 0;
-              currentRow--;
-              if (currentRow < 0) {
+              currentRow--; // Move up to the next row (since rows are indexed bottom-up)
+              if (currentRow < 0) { // If we go above the top row, stop
                 break;
               }
             }
           }
-          drawPixelArt();
+          drawPixelArt(); // Redraw art after pasting
         }
       });
 
+      // Add event listener for image upload input
       document.getElementById("imageUpload").addEventListener("change", handleImageUpload);
     });
   </script>
