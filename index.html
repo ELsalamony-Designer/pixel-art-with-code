@@ -2,24 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pixel Art from Grid</title>
+  <title>🎨 Pixel Art Creator</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #282c34;
-      --card-bg: #3a404c;
-      --text-color: #e0e0e0;
-      --accent-color: #61dafb;
-      --button-bg: #61dafb;
-      --button-hover: #21a1f1;
-      --border-color: #4a515c;
-      --shadow-color: rgba(0, 0, 0, 0.4);
-      --pixel-bg: #1a1e24;
-      --modal-bg: rgba(0, 0, 0, 0.7);
-      --modal-card-bg: #2b3038;
-      --success-color: #4CAF50;
-      --error-color: #f44336;
-      --grid-cell-size: 25px; /* Size for grid input cells */
+      /* New Light/Bright Theme Colors */
+      --bg-color: #f0f2f5;       /* Light Gray Background */
+      --card-bg: #ffffff;       /* White Card Background */
+      --text-color: #333333;     /* Dark Gray Text */
+      --accent-color: #8A2BE2;   /* Blue Violet - Main Accent */
+      --button-bg: #8A2BE2;      /* Blue Violet Button */
+      --button-hover: #9932CC;   /* Darker Orchid for Hover */
+      --border-color: #e0e0e0;   /* Lighter Gray Border */
+      --shadow-color: rgba(0, 0, 0, 0.1); /* Lighter Shadow */
+      --pixel-bg: #f8f9fa;      /* Off-white for Pixel Art Canvas */
+      --modal-bg: rgba(0, 0, 0, 0.5); /* Semi-transparent Black Modal Overlay */
+      --modal-card-bg: #ffffff; /* White Modal Card */
+      --success-color: #28a745;  /* Green Success */
+      --error-color: #dc3545;    /* Red Error */
+      --grid-cell-size: 25px;    /* Size for grid input cells */
+
+      /* Custom colors for dynamic text based on background */
+      --dark-text: #333333;
+      --light-text: #FFFFFF;
     }
 
     body {
@@ -81,7 +86,7 @@
         color: var(--accent-color);
         margin-bottom: 15px;
         font-size: 1.4em;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
         border-bottom: 1px solid var(--border-color);
         padding-bottom: 8px;
         text-align: center;
@@ -92,21 +97,22 @@
         align-items: center;
         margin-bottom: 8px;
         font-size: 0.9em;
-        background-color: rgba(0,0,0,0.1);
+        background-color: var(--bg-color); /* Lighter background for items */
         padding: 6px 10px;
         border-radius: 6px;
         transition: background-color 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .color-item:hover {
-        background-color: rgba(0,0,0,0.2);
+        background-color: var(--border-color);
     }
 
     .color-box {
         width: 18px;
         height: 18px;
         border-radius: 4px;
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid rgba(0,0,0,0.1);
         margin-right: 8px;
         flex-shrink: 0;
     }
@@ -114,7 +120,7 @@
     .color-code-char {
         font-family: monospace;
         font-weight: bold;
-        color: var(--button-bg);
+        color: var(--accent-color);
         margin-right: 8px;
         flex-shrink: 0;
     }
@@ -139,7 +145,7 @@
       padding: 25px;
       border-radius: 12px;
       box-shadow: 0 10px 30px var(--shadow-color);
-      max-width: 500px; /* Adjusted max-width for the grid inputs */
+      max-width: 500px;
       width: 100%;
       box-sizing: border-box;
       border: 1px solid var(--border-color);
@@ -167,7 +173,7 @@
       color: var(--accent-color);
       margin-bottom: 20px;
       font-size: 1.6em;
-      text-shadow: 3px 3px 0px rgba(0,0,0,0.6);
+      text-shadow: 3px 3px 0px rgba(0,0,0,0.2); /* Lighter shadow for headings */
       letter-spacing: 1px;
     }
 
@@ -181,6 +187,7 @@
     }
 
     input[type="text"],
+    input[type="number"],
     textarea {
       width: calc(100% - 16px);
       padding: 12px;
@@ -198,16 +205,17 @@
       white-space: pre;
       overflow: auto;
     }
-    textarea { /* This will be removed, but kept for now as a fallback if not fully replaced */
+    textarea {
       min-height: 100px;
       resize: vertical;
     }
 
     input[type="text"]:focus,
+    input[type="number"]:focus,
     textarea:focus {
       outline: none;
       border-color: var(--button-bg);
-      box-shadow: 0 0 15px rgba(97, 218, 251, 0.5);
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.3); /* Accent color for focus */
     }
 
     .input-dimensions {
@@ -225,29 +233,28 @@
     .input-dimensions input {
         width: 100%;
         padding: 10px;
-        margin-bottom: 0; /* Remove default margin */
+        margin-bottom: 0;
     }
     .input-dimensions button {
         flex-shrink: 0;
-        margin-top: 5px; /* Adjust if needed */
+        margin-top: 5px;
         min-width: 100px;
     }
 
     /* Pixel Grid Container */
     #pixelGridContainer {
         display: grid;
-        gap: 1px; /* Small gap between pixels */
-        border: 1px solid var(--border-border-color);
+        gap: 1px;
+        border: 1px solid var(--border-color);
         padding: 5px;
-        background-color: #1a1e24; /* Dark background for the grid area */
-        overflow: auto; /* Enable scrolling if grid is too large */
+        background-color: var(--bg-color); /* Light background for grid area */
         max-width: 100%;
         margin-bottom: 20px;
         border-radius: 8px;
-        box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
-        justify-content: center; /* Center the grid horizontally */
-        max-height: 500px; /* Added max-height for scrolling */
-        overflow-y: auto; /* Ensure vertical scrolling */
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.1); /* Lighter inset shadow */
+        justify-content: center;
+        max-height: 500px; /* Max height for scrolling */
+        overflow-y: auto; /* Enable vertical scrolling */
     }
 
     #pixelGridContainer input {
@@ -255,17 +262,16 @@
         height: var(--grid-cell-size);
         padding: 0;
         margin: 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background-color: #2b3038; /* Default background for individual cells */
-        color: var(--text-color); /* Default text color, will be overridden by JS */
+        border: 1px solid rgba(0, 0, 0, 0.05); /* Lighter border for cells */
+        background-color: var(--card-bg); /* Default background for individual cells */
         text-align: center;
-        font-family: 'Press Start 2P', cursive; /* Pixel font for input */
-        font-size: 0.8em; /* Smaller font for single characters */
-        text-transform: lowercase; /* Convert input to lowercase */
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.8em;
+        text-transform: lowercase;
         border-radius: 2px;
-        box-sizing: border-box; /* Include padding and border in element's total width and height */
-        -moz-appearance: textfield; /* Remove number input arrows in Firefox */
-        transition: background-color 0.1s ease, color 0.1s ease; /* Smooth transition for color change */
+        box-sizing: border-box;
+        -moz-appearance: textfield;
+        transition: background-color 0.1s ease, color 0.1s ease;
     }
     /* Hide number input arrows in Chrome, Safari, Edge */
     #pixelGridContainer input::-webkit-outer-spin-button,
@@ -274,14 +280,14 @@
       margin: 0;
     }
     #pixelGridContainer input[type=number] {
-      -moz-appearance: textfield; /* Firefox */
+      -moz-appearance: textfield;
     }
 
     #pixelGridContainer input:focus {
         border-color: var(--accent-color);
-        box-shadow: 0 0 8px rgba(97, 218, 251, 0.5);
+        box-shadow: 0 0 8px rgba(138, 43, 226, 0.3);
         outline: none;
-        z-index: 1; /* Keep focused element on top */
+        z-index: 1;
     }
 
     .button-group {
@@ -294,7 +300,7 @@
 
     button {
       background-color: var(--button-bg);
-      color: var(--bg-color);
+      color: var(--light-text); /* Ensure white text on buttons */
       padding: 12px 25px;
       border: none;
       border-radius: 8px;
@@ -302,21 +308,34 @@
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-      box-shadow: 0 5px 15px rgba(97, 218, 251, 0.4);
+      box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
       letter-spacing: 1px;
       flex-grow: 1;
       min-width: 140px;
+      display: flex; /* For centering text and emoji */
+      align-items: center;
+      justify-content: center;
+      gap: 8px; /* Space between text and emoji/number */
+    }
+
+    button .button-number {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.9em;
+        background-color: rgba(0,0,0,0.1);
+        padding: 3px 7px;
+        border-radius: 4px;
+        line-height: 1;
     }
 
     button:hover {
       background-color: var(--button-hover);
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(33, 161, 241, 0.5);
+      box-shadow: 0 8px 20px rgba(153, 50, 204, 0.4);
     }
 
     button:active {
       transform: translateY(0);
-      box-shadow: 0 3px 10px rgba(33, 161, 241, 0.3);
+      box-shadow: 0 3px 10px rgba(153, 50, 204, 0.2);
     }
 
     canvas {
@@ -325,7 +344,7 @@
       display: block;
       border: 3px solid var(--accent-color);
       border-radius: 8px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); /* Lighter shadow for canvas */
       image-rendering: optimizeSpeed;
       image-rendering: -moz-crisp-edges;
       image-rendering: -webkit-optimize-contrast;
@@ -341,6 +360,7 @@
         transform: scale(1.02);
     }
 
+    /* Animations */
     @keyframes fadeInScale {
         from { opacity: 0; transform: scale(0.95); }
         to { opacity: 1; transform: scale(1); }
@@ -348,6 +368,53 @@
     .fade-in {
         animation: fadeInScale 0.3s ease-out forwards;
     }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    .btn-pulse:hover {
+        animation: pulse 0.7s infinite alternate;
+    }
+
+    @keyframes bounceIn {
+      0%, 20%, 40%, 60%, 80%, 100% {
+        -webkit-transition-timing-function: cubic-bezier(0.215, .61, .355, 1);
+        transition-timing-function: cubic-bezier(0.215, .61, .355, 1)
+      }
+      0% {
+        opacity: 0;
+        -webkit-transform: scale3d(.3, .3, .3);
+        transform: scale3d(.3, .3, .3)
+      }
+      20% {
+        -webkit-transform: scale3d(1.1, 1.1, 1.1);
+        transform: scale3d(1.1, 1.1, 1.1)
+      }
+      40% {
+        -webkit-transform: scale3d(.9, .9, .9);
+        transform: scale3d(.9, .9, .9)
+      }
+      60% {
+        opacity: 1;
+        -webkit-transform: scale3d(1.03, 1.03, 1.03);
+        transform: scale3d(1.03, 1.03, 1.03)
+      }
+      80% {
+        -webkit-transform: scale3d(.97, .97, .97);
+        transform: scale3d(.97, .97, .97)
+      }
+      100% {
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1)
+      }
+    }
+    .bounce-in {
+        animation: bounceIn 0.8s;
+    }
+
 
     /* --- Modal Styles --- */
     .modal-overlay {
@@ -470,20 +537,21 @@
     }
 
     .message-box {
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: var(--bg-color); /* Lighter background for message box */
         padding: 8px;
         border-radius: 8px;
         margin-top: 10px;
         font-size: 0.85em;
         text-align: center;
         color: var(--text-color);
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
     }
     .message-box.success {
-        background-color: rgba(76, 175, 80, 0.2);
+        background-color: rgba(40, 167, 69, 0.1);
         color: var(--success-color);
     }
     .message-box.error {
-        background-color: rgba(244, 67, 54, 0.2);
+        background-color: rgba(220, 53, 69, 0.1);
         color: var(--error-color);
     }
 
@@ -491,7 +559,7 @@
     .footer {
         margin-top: 40px;
         padding: 20px;
-        color: #aaa;
+        color: #999; /* Lighter footer text */
         font-size: 0.9em;
         width: 100%;
         max-width: 1200px;
@@ -514,10 +582,10 @@
         padding-top: 20px;
     }
     .upload-section input[type="file"] {
-        display: none; /* Hide the default file input */
+        display: none;
     }
     .upload-section .custom-file-upload {
-        background-color: #4CAF50; /* Green for upload */
+        background-color: #28a745; /* Green for upload */
         color: white;
         padding: 10px 20px;
         border-radius: 8px;
@@ -528,7 +596,7 @@
         margin-top: 10px;
     }
     .upload-section .custom-file-upload:hover {
-        background-color: #45a049;
+        background-color: #218838;
     }
 
 
@@ -610,56 +678,65 @@
       .modal-content .price {
         font-size: 1.6em;
       }
-      /* Adjust grid cell size for smaller screens if needed */
-      /* :root {
-          --grid-cell-size: 20px;
-      } */
     }
   </style>
 </head>
 <body>
   <div class="header-buttons">
-    <button onclick="openPurchaseModal()">Purchase Website or Special Customizations</button>
+    <button onclick="openPurchaseModal()" class="btn-pulse">
+        <span class="button-number">1️⃣</span> Purchase Website or Special Customizations ✨
+    </button>
   </div>
 
   <div class="main-layout">
     <div class="color-palette">
-      <h3>Color Palette</h3>
+      <h3>Color Palette 🎨</h3>
       <div id="colorList">
-        </div>
+      </div>
     </div>
 
-    <div class="container">
-      <h2>🎨 Pixel Art from Grid</h2>
+    <div class="container bounce-in">
+      <h2>Pixel Art Creator 🖌️</h2>
 
       <div class="input-dimensions">
         <div>
-            <label for="gridWidth">Grid Width:</label>
+            <label for="gridWidth">Grid Width: ↔️</label>
             <input type="number" id="gridWidth" value="16" min="1" max="256">
         </div>
         <div>
-            <label for="gridHeight">Grid Height:</label>
+            <label for="gridHeight">Grid Height: ↕️</label>
             <input type="number" id="gridHeight" value="16" min="1" max="256">
         </div>
-        <button onclick="generatePixelGrid()">Create Grid</button>
+        <button onclick="generatePixelGrid()" class="btn-pulse">
+            <span class="button-number">2️⃣</span> Create Grid ✨
+        </button>
       </div>
 
-      <label for="imageName">Image Name:</label>
+      <label for="imageName">Image Name: 📁</label>
       <input type="text" id="imageName" value="My_Pixel_Art">
 
       <div class="upload-section">
-          <label>Or Upload Image:</label>
+          <label>Or Upload Image: 📸</label>
           <input type="file" id="imageUpload" accept="image/*">
-          <label for="imageUpload" class="custom-file-upload">Upload Image</label>
+          <label for="imageUpload" class="custom-file-upload btn-pulse">Upload Image ⬆️</label>
       </div>
 
       <div id="pixelGridContainer">
-        </div>
+      </div>
 
       <div class="button-group">
-        <button onclick="drawPixelArt()">Show Art</button>
-        <button onclick="downloadPixelArt()">Download Image</button>
-        <button onclick="copyPixelArtCode()">Copy Code</button> <button onclick="clearPixelGrid()">Clear Grid</button>
+        <button onclick="drawPixelArt()" class="btn-pulse">
+            <span class="button-number">3️⃣</span> Show Art 🖼️
+        </button>
+        <button onclick="downloadPixelArt()" class="btn-pulse">
+            <span class="button-number">4️⃣</span> Download Image 💾
+        </button>
+        <button onclick="copyPixelArtCode()" class="btn-pulse">
+            <span class="button-number">5️⃣</span> Copy Code 📋
+        </button>
+        <button onclick="clearPixelGrid()" class="btn-pulse">
+            <span class="button-number">6️⃣</span> Clear Grid 🗑️
+        </button>
       </div>
     </div>
   </div>
@@ -667,52 +744,58 @@
   <canvas id="canvas" width="32" height="32"></canvas>
 
   <div class="modal-overlay" id="purchaseModal">
-    <div class="modal-content">
-      <button class="close-button" onclick="closePurchaseModal()">✖</button>
-      <h3>Purchase Website or Special Customizations</h3>
+    <div class="modal-content bounce-in">
+      <button class="close-button" onclick="closePurchaseModal()">✖️</button>
+      <h3>Purchase Website or Special Customizations ✨</h3>
       <p>
-        If you are interested in creating your own professional website, or wish to get custom modifications for any project, please contact us.
+        If you're looking to create your own **professional website**, or need **custom modifications** for any project, we're here to help!
       </p>
       <p>
-        <span class="price">Price: Starting from 1000 EGP</span>
+        <span class="price">Price: Starting from 1000 EGP 🚀</span>
         <br>
-        For inquiries, please contact via number: <br>
-        <a href="tel:+201210409574" class="contact-link">01210409574</a>
+        For inquiries, please contact us at: <br>
+        <a href="tel:+201210409574" class="contact-link">📞 01210409574</a>
       </p>
 
       <div class="button-group">
-          <button onclick="window.location.href = 'tel:+201210409574'">Contact 01210409574</button>
-          <button onclick="toggleCustomOrderForm()">Order Another Custom Website</button>
+          <button onclick="window.location.href = 'tel:+201210409574'" class="btn-pulse">
+              <span class="button-number">7️⃣</span> Call Now! 📞
+          </button>
+          <button onclick="toggleCustomOrderForm()" class="btn-pulse">
+              <span class="button-number">8️⃣</span> Order Custom Website! 🌐
+          </button>
       </div>
 
       <div class="order-form" id="customOrderForm">
-          <h4>Custom Website Order Details:</h4>
-          <label for="clientName">Full Name:</label>
+          <h4>Custom Website Order Details: 📝</h4>
+          <label for="clientName">Full Name: 🧑‍💻</label>
           <input type="text" id="clientName" placeholder="e.g., Ahmed Mohamed Ali">
 
-          <label for="clientPhone">Phone Number:</label>
+          <label for="clientPhone">Phone Number: 📱</label>
           <input type="text" id="clientPhone" placeholder="e.g., 01234567890">
 
-          <label for="clientCountry">Country:</label>
+          <label for="clientCountry">Country: 🌍</label>
           <input type="text" id="clientCountry" value="Egypt" placeholder="e.g., Egypt">
 
-          <label for="clientCity">City:</label>
+          <label for="clientCity">City: 🏙️</label>
           <input type="text" id="clientCity" placeholder="e.g., Cairo">
 
-          <label for="projectName">Proposed Project Name:</label>
+          <label for="projectName">Proposed Project Name: 💡</label>
           <input type="text" id="projectName" placeholder="e.g., 'Modern Fashion' Clothing Store">
 
-          <label for="projectPurpose">Purpose of the Website (e.g., personal brand, e-commerce, blog):</label>
+          <label for="projectPurpose">Purpose of the Website (e.g., personal brand, e-commerce, blog): 🎯</label>
           <textarea id="projectPurpose" placeholder="Briefly explain why you need the website and its goals"></textarea>
 
-          <button onclick="submitCustomOrder()">Submit Order</button>
+          <button onclick="submitCustomOrder()" class="btn-pulse">
+              <span class="button-number">9️⃣</span> Submit Order! ✅
+          </button>
           <div id="orderMessage" class="message-box"></div>
       </div>
     </div>
   </div>
 
   <div class="footer">
-    BY: <a href="https://www.tiktok.com/@elsalamony.web.de" target="_blank">Elsalamony (Web designer)</a>
+    Made with ❤️ by <a href="https://www.tiktok.com/@elsalamony.web.de" target="_blank">Elsalamony (Web designer)</a>
   </div>
 
   <script>
@@ -790,8 +873,8 @@
 
     let currentGridWidth = 16;
     let currentGridHeight = 16;
-    const DEFAULT_CELL_BG = '#2b3038'; // لون الخلفية الافتراضي لمربعات الإدخال
-    const MAX_IMAGE_DIMENSION = 256; // Maximum width/height for uploaded images (changed to 256)
+    const DEFAULT_CELL_BG = '#F0F2F5'; // Default background for input cells
+    const MAX_IMAGE_DIMENSION = 256; // Maximum width/height for uploaded images
 
     // Function to calculate Euclidean distance between two colors (RGB)
     function colorDistance(rgb1, rgb2) {
@@ -804,7 +887,7 @@
 
     // Function to convert hex to RGB
     function hexToRgb(hex) {
-        if (!hex || hex === "transparent") return { r: 0, g: 0, b: 0, a: 0 }; // Handle transparent
+        if (!hex || hex === "transparent") return { r: 0, g: 0, b: 0, a: 0 };
         let r = 0, g = 0, b = 0;
         // Handle 3-digit hex
         if (hex.length === 4) {
@@ -821,6 +904,7 @@
 
     // Function to calculate perceived luminance (brightness) of an RGB color
     function getLuminance(r, g, b) {
+        // Standard formula for perceived luminance
         return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     }
 
@@ -830,7 +914,7 @@
             return { char, rgb: null, hex: info.hex };
         }
         return { char, rgb: hexToRgb(info.hex), hex: info.hex };
-    }).filter(item => item.rgb !== null); // Filter out transparent for distance calculation
+    }).filter(item => item.rgb !== null);
 
     // Function to find the closest color character from the palette
     function getClosestColorChar(r, g, b, a) {
@@ -860,11 +944,11 @@
       // Determine text color based on background luminance
       const rgb = hexToRgb(bgColor);
       if (rgb.a === 0) { // If transparent, use a default readable color (e.g., light gray)
-          cell.style.color = '#ccc';
+          cell.style.color = 'var(--text-color)'; // Use default dark text for transparent
       } else {
           const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
-          // Use a threshold (e.g., 0.5) to decide between black and white text
-          cell.style.color = luminance > 0.5 ? '#000000' : '#FFFFFF'; // Black for light, white for dark
+          // Adjust threshold if needed for better contrast
+          cell.style.color = luminance > 0.5 ? 'var(--dark-text)' : 'var(--light-text)'; // Black for light, white for dark
       }
     }
 
@@ -974,7 +1058,7 @@
         canvas.width = 32;
         canvas.height = 32;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#888";
+        ctx.fillStyle = "var(--text-color)";
         ctx.font = "16px 'Cairo', sans-serif";
         ctx.textAlign = "center";
         ctx.fillText("Create a grid!", canvas.width / 2, canvas.height / 2);
@@ -1074,11 +1158,11 @@
         
         navigator.clipboard.writeText(code)
             .then(() => {
-                alert('Pixel art code copied to clipboard!');
+                alert('Pixel art code copied to clipboard! 📋');
             })
             .catch(err => {
                 console.error('Failed to copy text: ', err);
-                alert('Failed to copy code. Please try again or copy manually.');
+                alert('Failed to copy code. Please try again or copy manually. ❌');
             });
     }
 
@@ -1156,7 +1240,6 @@
         reader.onload = function(e) {
             const img = new Image();
             img.onload = function() {
-                // Create a temporary canvas to draw and potentially resize the image
                 const tempCanvas = document.createElement('canvas');
                 const tempCtx = tempCanvas.getContext('2d');
 
@@ -1180,45 +1263,37 @@
 
                 tempCanvas.width = imgWidth;
                 tempCanvas.height = imgHeight;
-                // Draw image with pixelated rendering
-                tempCtx.imageSmoothingEnabled = false; // Important for pixelated effect
+                tempCtx.imageSmoothingEnabled = false;
                 tempCtx.drawImage(img, 0, 0, imgWidth, imgHeight);
 
-                // Update grid dimensions inputs
                 document.getElementById("gridWidth").value = imgWidth;
                 document.getElementById("gridHeight").value = imgHeight;
 
-                // Generate new grid based on image dimensions
                 generatePixelGrid();
 
-                // Get image data from the temporary canvas
                 const imageData = tempCtx.getImageData(0, 0, imgWidth, imgHeight).data;
                 const pixelGridContainer = document.getElementById("pixelGridContainer");
 
-                // Fill the grid cells with corresponding color characters
                 let pixelIndex = 0;
-                // Iterate through the image pixels (top-down, left-right)
                 for (let y = 0; y < imgHeight; y++) {
                     for (let x = 0; x < imgWidth; x++) {
                         const r = imageData[pixelIndex];
                         const g = imageData[pixelIndex + 1];
                         const b = imageData[pixelIndex + 2];
-                        const a = imageData[pixelIndex + 3]; // Alpha channel
+                        const a = imageData[pixelIndex + 3];
 
                         const char = getClosestColorChar(r, g, b, a);
 
-                        // Find the corresponding input cell using its data-row and data-col
-                        // Remember the grid inputs are generated bottom-up, so convert Y
                         const targetCell = pixelGridContainer.querySelector(`input[data-row="${imgHeight - 1 - y}"][data-col="${x}"]`);
 
                         if (targetCell) {
                             targetCell.value = char;
                             applyCellColor(targetCell);
                         }
-                        pixelIndex += 4; // Move to the next pixel (RGBA)
+                        pixelIndex += 4;
                     }
                 }
-                drawPixelArt(); // Redraw art after processing image
+                drawPixelArt();
             };
             img.src = e.target.result;
         };
@@ -1232,6 +1307,11 @@
         document.getElementById("customOrderForm").classList.remove("active");
         document.getElementById("orderMessage").textContent = "";
         document.getElementById("orderMessage").className = "message-box";
+        // Add bounce-in animation to modal content when it opens
+        const modalContent = modal.querySelector('.modal-content');
+        modalContent.classList.remove('bounce-in');
+        void modalContent.offsetWidth; // Trigger reflow
+        modalContent.classList.add('bounce-in');
     }
 
     function closePurchaseModal() {
@@ -1262,7 +1342,7 @@
         orderMessageDiv.className = "message-box";
 
         if (!clientName || !clientPhone || !projectName || !projectPurpose) {
-            orderMessageDiv.textContent = "Please fill in all required fields (Name, Phone Number, Project Name, Purpose).";
+            orderMessageDiv.textContent = "Please fill in all required fields (Name, Phone Number, Project Name, Purpose). ⚠️";
             orderMessageDiv.classList.add("error");
             return;
         }
@@ -1281,7 +1361,7 @@
         const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         window.location.href = mailtoLink;
 
-        orderMessageDiv.textContent = "Your request has been received successfully! Your email client will open to send the details.";
+        orderMessageDiv.textContent = "Your request has been received successfully! Your email client will open to send the details. ✅";
         orderMessageDiv.classList.add("success");
 
         // Optionally clear the form after "submission"
