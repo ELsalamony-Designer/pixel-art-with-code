@@ -485,6 +485,28 @@
         color: var(--error-color);
     }
 
+    /* Footer Styles */
+    .footer {
+        margin-top: 40px;
+        padding: 20px;
+        color: #aaa;
+        font-size: 0.9em;
+        width: 100%;
+        max-width: 1200px;
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+    }
+    .footer a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.2s ease;
+    }
+    .footer a:hover {
+        color: var(--button-hover);
+        text-decoration: underline;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 900px) {
         body {
@@ -605,7 +627,8 @@
       <div class="button-group">
         <button onclick="drawPixelArt()">Show Art</button>
         <button onclick="downloadPixelArt()">Download Image</button>
-        <button onclick="clearPixelGrid()">Clear Grid</button> </div>
+        <button onclick="clearPixelGrid()">Clear Grid</button>
+      </div>
     </div>
   </div>
 
@@ -656,6 +679,9 @@
     </div>
   </div>
 
+  <div class="footer">
+    BY: <a href="https://www.tiktok.com/@elsalamony.web.de" target="_blank">Elsalamony (Web designer)</a>
+  </div>
 
   <script>
     const colors = {
@@ -737,7 +763,8 @@
     function applyCellColor(cell) {
       const char = cell.value.toLowerCase();
       const colorInfo = colors[char];
-      cell.style.backgroundColor = (char === '0' || !colorInfo) ? DEFAULT_CELL_BG : colorInfo.hex;
+      // If the character is '0' or not in colors, use default background, otherwise use the color's hex
+      cell.style.backgroundColor = (char === '0' || !colorInfo || colorInfo.hex === "transparent") ? DEFAULT_CELL_BG : colorInfo.hex;
     }
 
     function generatePixelGrid() {
@@ -770,12 +797,56 @@
           cell.placeholder = '0'; // Default to transparent
           cell.style.backgroundColor = DEFAULT_CELL_BG; // Set default background
 
-          // Add event listener to update background color and redraw art
+          // Add event listener to update background color and move focus
           cell.addEventListener('input', (event) => {
-            event.target.value = event.target.value.toLowerCase(); // Ensure lowercase
-            applyCellColor(event.target); // Apply background color based on input
+            const currentCell = event.target;
+            currentCell.value = currentCell.value.toLowerCase(); // Ensure lowercase
+            applyCellColor(currentCell); // Apply background color based on input
+
+            // Move focus to the next cell automatically
+            const currentRow = parseInt(currentCell.dataset.row);
+            const currentCol = parseInt(currentCell.dataset.col);
+
+            let nextCol = currentCol + 1;
+            let nextRow = currentRow;
+
+            if (nextCol >= currentGridWidth) {
+              nextCol = 0;
+              nextRow--; // Move to the row above (since grid is built bottom-up)
+            }
+
+            // Find the next cell and focus it if it exists
+            const nextCell = pixelGridContainer.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
+            if (nextCell) {
+              nextCell.focus();
+            }
             drawPixelArt(); // Redraw art after individual input
           });
+
+          // Add event listener for Backspace to move focus backwards
+          cell.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace' && event.target.value === '') {
+                const currentCell = event.target;
+                const currentRow = parseInt(currentCell.dataset.row);
+                const currentCol = parseInt(currentCell.dataset.col);
+
+                let prevCol = currentCol - 1;
+                let prevRow = currentRow;
+
+                if (prevCol < 0) {
+                    prevCol = currentGridWidth - 1;
+                    prevRow++; // Move to the row below (since grid is built bottom-up)
+                }
+
+                const prevCell = pixelGridContainer.querySelector(`input[data-row="${prevRow}"][data-col="${prevCol}"]`);
+                if (prevCell) {
+                    prevCell.focus();
+                    event.preventDefault(); // Prevent default backspace behavior (deleting from previous cell)
+                }
+            }
+          });
+
+
           pixelGridContainer.appendChild(cell);
         }
       }
@@ -1030,9 +1101,6 @@
           let currentRow = startRow;
           let currentCol = startCol;
 
-          // Collect all cells to update them efficiently
-          const cellsToUpdate = [];
-
           while (charIndex < pastedText.length) {
             // Find the cell using querySelector based on data attributes
             const targetCell = pixelGridContainer.querySelector(`input[data-row="${currentRow}"][data-col="${currentCol}"]`);
@@ -1040,7 +1108,6 @@
             if (targetCell) {
               targetCell.value = pastedText[charIndex];
               applyCellColor(targetCell); // Apply background color for pasted cell
-              cellsToUpdate.push(targetCell); // Add to list for potential focus/selection later
             } else {
               // If we run out of cells, stop pasting
               break;
